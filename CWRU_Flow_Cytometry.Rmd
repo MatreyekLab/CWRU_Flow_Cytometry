@@ -29,12 +29,14 @@ lsr2_detectors$max <- lsr2_detectors$mid + lsr2_detectors$band
 ```
 
 ```{r}
-attune_fp_table <- function(input_string){
+attune_fp_table <- function(input_string, brightness){
   fp_file_location <- paste("Spectra/",input_string,".csv", sep = "")
   excitation_name <- paste(input_string,".ex", sep = "")
   emission_name <- paste(input_string,".em", sep = "")
   
   fp <- read.csv(file = fp_file_location, header = T, stringsAsFactors = F)
+  fp[,3] <- fp[,3] / sum(fp[,3], na.rm = TRUE) * brightness
+  
   fp_excitation <- data.frame("laser" = attune_lasers$laser, "excitation" = attune_lasers$excitation)
   fp_excitation$efficiency <- 0
   for(x in 1:nrow(fp_excitation)){if(fp_excitation$excitation[x] %in% fp$wavelength){
@@ -79,12 +81,14 @@ attune_fp_table <- function(input_string){
 
 
 
-lsr2_fp_table <- function(input_string){
+lsr2_fp_table <- function(input_string, brightness){
   fp_file_location <- paste("Spectra/",input_string,".csv", sep = "")
   excitation_name <- paste(input_string,".ex", sep = "")
   emission_name <- paste(input_string,".em", sep = "")
   
   fp <- read.csv(file = fp_file_location, header = T, stringsAsFactors = F)
+  fp[,3] <- fp[,3] / sum(fp[,3], na.rm = TRUE) * brightness
+  
   fp_excitation <- data.frame("laser" = lsr2_lasers$laser, "excitation" = lsr2_lasers$excitation)
   fp_excitation$efficiency <- 0
   for(x in 1:nrow(fp_excitation)){if(fp_excitation$excitation[x] %in% fp$wavelength){
@@ -129,26 +133,23 @@ lsr2_fp_table <- function(input_string){
 ```
 
 ```{r}
-mScarlet_plot <- attune_fp_table("mScarlet.I");ggsave(file = "Plots/Attune/mScarlet_plot.pdf", mScarlet_plot, height = 4, width = 3)
-EGFP_plot <- attune_fp_table("EGFP");ggsave(file = "Plots/Attune/EGFP_plot.pdf", EGFP_plot, height = 4, width = 3)
-mCherry_plot <- attune_fp_table("mCherry");ggsave(file = "Plots/Attune/mCherry_plot.pdf", mCherry_plot, height = 4, width = 3)
-mTagBFP2_plot <- attune_fp_table("mTagBFP2");ggsave(file = "Plots/Attune/mTagBFP2_plot.pdf", mTagBFP2_plot, height = 4, width = 3)
-iRFP670_plot <- attune_fp_table("iRFP670");ggsave(file = "Plots/Attune/iRFP670_plot.pdf", iRFP670_plot, height = 4, width = 3)
-miRFP670_plot <- attune_fp_table("miRFP670");ggsave(file = "Plots/Attune/miRFP670_plot.pdf", miRFP670_plot, height = 4, width = 3)
-mNeonGreen_plot <- attune_fp_table("mNeonGreen");ggsave(file = "Plots/Attune/mNeonGreen_plot.pdf", mNeonGreen_plot, height = 4, width = 3)
-UnaG_plot <- attune_fp_table("UnaG");ggsave(file = "Plots/Attune/UnaG_plot.pdf", UnaG_plot, height = 4, width = 3)
-TDsmURFP_plot <- attune_fp_table("TDsmURFP");ggsave(file = "Plots/Attune/TDsmURFP_plot.pdf", TDsmURFP_plot, height = 4, width = 3)
-iRFP682_plot <- attune_fp_table("iRFP682");ggsave(file = "Plots/Attune/iRFP682_plot.pdf", iRFP682_plot, height = 4, width = 3)
+mScarlet_plot <- attune_fp_table("mScarlet.I",70);ggsave(file = "Plots/Attune/mScarlet_plot.pdf", mScarlet_plot, height = 4, width = 3)
+EGFP_plot <- attune_fp_table("EGFP",33.54);ggsave(file = "Plots/Attune/EGFP_plot.pdf", EGFP_plot, height = 4, width = 3)
+mCherry_plot <- attune_fp_table("mCherry",15.84);ggsave(file = "Plots/Attune/mCherry_plot.pdf", mCherry_plot, height = 4, width = 3)
+mTagBFP2_plot <- attune_fp_table("mTagBFP2",32.38);ggsave(file = "Plots/Attune/mTagBFP2_plot.pdf", mTagBFP2_plot, height = 4, width = 3)
+iRFP670_plot <- attune_fp_table("iRFP670",12.54);ggsave(file = "Plots/Attune/iRFP670_plot.pdf", iRFP670_plot, height = 4, width = 3)
+miRFP670_plot <- attune_fp_table("miRFP670",12.24);ggsave(file = "Plots/Attune/miRFP670_plot.pdf", miRFP670_plot, height = 4, width = 3)
+mNeonGreen_plot <- attune_fp_table("mNeonGreen",92.8);ggsave(file = "Plots/Attune/mNeonGreen_plot.pdf", mNeonGreen_plot, height = 4, width = 3)
+UnaG_plot <- attune_fp_table("UnaG",39.42);ggsave(file = "Plots/Attune/UnaG_plot.pdf", UnaG_plot, height = 4, width = 3)
+TDsmURFP_plot <- attune_fp_table("TDsmURFP",30.6);ggsave(file = "Plots/Attune/TDsmURFP_plot.pdf", TDsmURFP_plot, height = 4, width = 3)
 
-mScarlet_plot <- lsr2_fp_table("mScarlet.I");ggsave(file = "Plots/Lsr2/mScarlet_plot.pdf", mScarlet_plot, height = 4, width = 3)
-EGFP_plot <- lsr2_fp_table("EGFP");ggsave(file = "Plots/Lsr2/EGFP_plot.pdf", EGFP_plot, height = 4, width = 3)
-mCherry_plot <- lsr2_fp_table("mCherry");ggsave(file = "Plots/Lsr2/mCherry_plot.pdf", mCherry_plot, height = 4, width = 3)
-mTagBFP2_plot <- lsr2_fp_table("mTagBFP2");ggsave(file = "Plots/Lsr2/mTagBFP2_plot.pdf", mTagBFP2_plot, height = 4, width = 3)
-iRFP670_plot <- lsr2_fp_table("iRFP670");ggsave(file = "Plots/Lsr2/iRFP670_plot.pdf", iRFP670_plot, height = 4, width = 3)
-miRFP670_plot <- lsr2_fp_table("miRFP670");ggsave(file = "Plots/Lsr2/miRFP670_plot.pdf", miRFP670_plot, height = 4, width = 3)
-mNeonGreen_plot <- lsr2_fp_table("mNeonGreen");ggsave(file = "Plots/Lsr2/mNeonGreen_plot.pdf", mNeonGreen_plot, height = 4, width = 3)
-UnaG_plot <- lsr2_fp_table("UnaG");ggsave(file = "Plots/Lsr2/UnaG_plot.pdf", UnaG_plot, height = 4, width = 3)
-TDsmURFP_plot <- lsr2_fp_table("TDsmURFP");ggsave(file = "Plots/Lsr2/TDsmURFP_plot.pdf", TDsmURFP_plot, height = 4, width = 3)
-iRFP682_plot <- lsr2_fp_table("iRFP682");ggsave(file = "Plots/lsr2/iRFP682_plot.pdf", iRFP682_plot, height = 4, width = 3)
-
+mScarlet_plot <- lsr2_fp_table("mScarlet.I",70);ggsave(file = "Plots/Lsr2/mScarlet_plot.pdf", mScarlet_plot, height = 4, width = 3)
+EGFP_plot <- lsr2_fp_table("EGFP",33.54);ggsave(file = "Plots/Lsr2/EGFP_plot.pdf", EGFP_plot, height = 4, width = 3)
+mCherry_plot <- lsr2_fp_table("mCherry",15.84);ggsave(file = "Plots/Lsr2/mCherry_plot.pdf", mCherry_plot, height = 4, width = 3)
+mTagBFP2_plot <- lsr2_fp_table("mTagBFP2",32.38);ggsave(file = "Plots/Lsr2/mTagBFP2_plot.pdf", mTagBFP2_plot, height = 4, width = 3)
+iRFP670_plot <- lsr2_fp_table("iRFP670",12.54);ggsave(file = "Plots/Lsr2/iRFP670_plot.pdf", iRFP670_plot, height = 4, width = 3)
+miRFP670_plot <- lsr2_fp_table("miRFP670",12.24);ggsave(file = "Plots/Lsr2/miRFP670_plot.pdf", miRFP670_plot, height = 4, width = 3)
+mNeonGreen_plot <- lsr2_fp_table("mNeonGreen",92.8);ggsave(file = "Plots/Lsr2/mNeonGreen_plot.pdf", mNeonGreen_plot, height = 4, width = 3)
+UnaG_plot <- lsr2_fp_table("UnaG",39.42);ggsave(file = "Plots/Lsr2/UnaG_plot.pdf", UnaG_plot, height = 4, width = 3)
+TDsmURFP_plot <- lsr2_fp_table("TDsmURFP",30.6);ggsave(file = "Plots/Lsr2/TDsmURFP_plot.pdf", TDsmURFP_plot, height = 4, width = 3)
 ```
