@@ -10,41 +10,41 @@ rm(list = ls())
 library(tidyverse)
 library(reshape)
 
-attune_lasers <- data.frame("laser" = c("VL","BL","YL","RL"), "excitation" = c(405,488,561,638))
+attune_lasers <- data.frame("laser" = c("V-405","B-488","YG-561","R-638"), "excitation" = c(405,488,561,638))
 attune_detectors <- data.frame(
-  "laser" = c(c("VL","VL","VL","VL"),c("BL","BL","BL"),c("YL","YL","YL","YL"),c("RL","RL","RL")),
+  "laser" = c(c("V-405","V-405","V-405","V-405"),c("B-488","B-488","B-488"),c("YG-561","YG-561","YG-561","YG-561"),c("R-638","R-638","R-638")),
   "mid" = c(c(440,512,603,710),c(530,590,695),c(585,620,695,780),c(670,720,780)),
   "band" = c(c(50,25,48,50),c(30,40,40),c(16,15,40,60),c(14,30,60)))
 attune_detectors$min <- attune_detectors$mid - attune_detectors$band
 attune_detectors$max <- attune_detectors$mid + attune_detectors$band
 
-lsr2_lasers <- data.frame("laser" = c("UV","VL","BL","YL","RL"), "excitation" = c(355,405,488,561,638))
+lsr2_lasers <- data.frame("laser" = c("UV-355","V-405","B-488","YG-561","R-640"), "excitation" = c(355,405,488,561,640))
 lsr2_detectors <- data.frame(
-  "laser" = c(c("UV","UV"),c("VL","VL","VL","VL","VL","VL"),c("BL","BL"),c("YL","YL","YL","YL","YL"),c("RL","RL","RL")),
+  "laser" = c(c("UV-355","UV-355"),c("V-405","V-405","V-405","V-405","V-405","V-405"),c("B-488","B-488"),c("YG-561","YG-561","YG-561","YG-561","YG-561"),c("R-640","R-640","R-640")),
   "mid" = c(c(440,670),c(440,520,575,610,660,710),c(525,695),c(582,610,670,710,780),c(660,710,780)),
   "band" = c(c(40,40),c(40,40,20,20,20,50),c(50,40),c(15,20,14,50,60),c(20,40,60)))
 lsr2_detectors$min <- lsr2_detectors$mid - lsr2_detectors$band
 lsr2_detectors$max <- lsr2_detectors$mid + lsr2_detectors$band
 
-aria_lasers <- data.frame("laser" = c("VL","BL","RL"), "excitation" = c(405,488,633))
+aria_lasers <- data.frame("laser" = c("V-405","B-488","R-633"), "excitation" = c(405,488,633))
 aria_detectors <- data.frame(
-  "laser" = c(c("VL","VL","VL"),c("BL","BL","BL","BL","BL","BL"),c("RL","RL","RL")),
+  "laser" = c(c("V-405","V-405","V-405"),c("B-488","B-488","B-488","B-488","B-488","B-488"),c("R-633","R-633","R-633")),
   "mid" = c(c(450,530,595),c(530,576,610,675,710,780),c(660,710,780)),
   "band" = c(c(40,30,40),c(30,26,20,20,40,60),c(20,40,60)))
 aria_detectors$min <- aria_detectors$mid - aria_detectors$band
 aria_detectors$max <- aria_detectors$mid + aria_detectors$band
 
-sorp_lasers <- data.frame("laser" = c("UV","VL","BL","YL","RL"), "excitation" = c(355,405,488,532,642))
+sorp_lasers <- data.frame("laser" = c("UV-355","V-405","B-488","G-532","R-642"), "excitation" = c(355,405,488,532,642))
 sorp_detectors <- data.frame(
-  "laser" = c(c("UV","UV"),c("VL","VL","VL","VL","VL","VL"),c("BL","BL"),c("YL","YL","YL","YL","YL"),c("RL","RL","RL")),
+  "laser" = c(c("UV-355","UV-355"),c("V-405","V-405","V-405","V-405","V-405","V-405"),c("B-488","B-488"),c("G-532","G-532","G-532","G-532","G-532"),c("R-642","R-642","R-642")),
   "mid" = c(c(379,740),c(450,525,610,670,710,780),c(515,695),c(575,610,670,695,780),c(670,730,780)),
   "band" = c(c(28,35),c(50,50,20,30,50,60),c(20,40),c(26,20,30,40,60),c(30,45,60)))
 sorp_detectors$min <- sorp_detectors$mid - sorp_detectors$band
 sorp_detectors$max <- sorp_detectors$mid + sorp_detectors$band
 
-fortessa_lasers <- data.frame("laser" = c("UV","VL","BL","YL","RL"), "excitation" = c(355,405,488,532,640))
+fortessa_lasers <- data.frame("laser" = c("UV-355","V-405","B-488","YG-532","R-640"), "excitation" = c(355,405,488,532,640))
 fortessa_detectors <- data.frame(
-  "laser" = c(c("UV","UV"),c("VL","VL","VL","VL","VL","VL"),c("BL","BL"),c("YL","YL","YL","YL","YL"),c("RL","RL","RL")),
+  "laser" = c(c("UV-355","UV-355"),c("V-405","V-405","V-405","V-405","V-405","V-405"),c("B-488","B-488"),c("YG-532","YG-532","YG-532","YG-532","YG-532"),c("R-640","R-640","R-640")),
   "mid" = c(c(379,740),c(450,525,610,670,710,780),c(515,695),c(575,610,670,695,780),c(670,730,780)),
   "band" = c(c(28,35),c(50,50,20,30,50,60),c(20,40),c(26,20,30,40,60),c(30,45,60)))
 fortessa_detectors$min <- fortessa_detectors$mid - fortessa_detectors$band
@@ -96,6 +96,7 @@ attune_fp_table <- function(input_string){
   fp_output_melted[fp_output_melted$value > 50,"value"] <- 50
   
   fp_plot <- ggplot() + theme_bw() + 
+    theme(axis.text.x.bottom = element_text(angle = 45, hjust = 1)) +
     scale_fill_continuous(low = "white", high = "black", limits = c(0,50)) +
     ggtitle(input_string) +
     labs(x= NULL, y = NULL) +
@@ -148,6 +149,7 @@ lsr2_fp_table <- function(input_string){
   fp_output_melted[fp_output_melted$value > 50,"value"] <- 50
   
   fp_plot <- ggplot() + theme_bw() + 
+    theme(axis.text.x.bottom = element_text(angle = 45, hjust = 1)) +
     scale_fill_continuous(low = "white", high = "black", limits = c(0,50)) +
     ggtitle(input_string) +
     labs(x= NULL, y = NULL) +
@@ -198,6 +200,7 @@ aria_fp_table <- function(input_string){
   fp_output_melted[fp_output_melted$value > 50,"value"] <- 50
   
   fp_plot <- ggplot() + theme_bw() + 
+    theme(axis.text.x.bottom = element_text(angle = 45, hjust = 1)) +
     scale_fill_continuous(low = "white", high = "black", limits = c(0,50)) +
     ggtitle(input_string) +
     labs(x= NULL, y = NULL) +
@@ -248,6 +251,7 @@ sorp_fp_table <- function(input_string){
   fp_output_melted[fp_output_melted$value > 50,"value"] <- 50
   
   fp_plot <- ggplot() + theme_bw() + 
+    theme(axis.text.x.bottom = element_text(angle = 45, hjust = 1)) +
     scale_fill_continuous(low = "white", high = "black", limits = c(0,50)) +
     ggtitle(input_string) +
     labs(x= NULL, y = NULL) +
@@ -298,6 +302,7 @@ fortessa_fp_table <- function(input_string){
   fp_output_melted[fp_output_melted$value > 50,"value"] <- 50
   
   fp_plot <- ggplot() + theme_bw() + 
+    theme(axis.text.x.bottom = element_text(angle = 45, hjust = 1)) +
     scale_fill_continuous(low = "white", high = "black", limits = c(0,50)) +
     ggtitle(input_string) +
     labs(x= NULL, y = NULL) +
@@ -307,60 +312,60 @@ fortessa_fp_table <- function(input_string){
 ```
 
 ```{r Actually generating each plot}
-attune_mScarlet_plot <- attune_fp_table("mScarlet.I");ggsave(file = "Plots/Attune/mScarlet_plot.pdf", mScarlet_plot, height = 4, width = 3)
-attune_EGFP_plot <- attune_fp_table("EGFP");ggsave(file = "Plots/Attune/EGFP_plot.pdf", EGFP_plot, height = 4, width = 3)
-attune_mCherry_plot <- attune_fp_table("mCherry");ggsave(file = "Plots/Attune/mCherry_plot.pdf", mCherry_plot, height = 4, width = 3)
-attune_mTagBFP2_plot <- attune_fp_table("mTagBFP2");ggsave(file = "Plots/Attune/mTagBFP2_plot.pdf", mTagBFP2_plot, height = 4, width = 3)
-attune_iRFP670_plot <- attune_fp_table("iRFP670");ggsave(file = "Plots/Attune/iRFP670_plot.pdf", iRFP670_plot, height = 4, width = 3)
-attune_miRFP670_plot <- attune_fp_table("miRFP670");ggsave(file = "Plots/Attune/miRFP670_plot.pdf", miRFP670_plot, height = 4, width = 3)
-attune_mNeonGreen_plot <- attune_fp_table("mNeonGreen");ggsave(file = "Plots/Attune/mNeonGreen_plot.pdf", mNeonGreen_plot, height = 4, width = 3)
-attune_UnaG_plot <- attune_fp_table("UnaG");ggsave(file = "Plots/Attune/UnaG_plot.pdf", UnaG_plot, height = 4, width = 3)
-attune_TDsmURFP_plot <- attune_fp_table("TDsmURFP");ggsave(file = "Plots/Attune/TDsmURFP_plot.pdf", TDsmURFP_plot, height = 4, width = 3)
-attune_iRFP682_plot <- attune_fp_table("iRFP682");ggsave(file = "Plots/Attune/iRFP682_plot.pdf", iRFP682_plot, height = 4, width = 3)
+attune_mScarlet_plot <- attune_fp_table("mScarlet.I");ggsave(file = "Plots/Attune/mScarlet_plot.pdf", attune_mScarlet_plot, height = 4, width = 3)
+attune_EGFP_plot <- attune_fp_table("EGFP");ggsave(file = "Plots/Attune/EGFP_plot.pdf", attune_EGFP_plot, height = 4, width = 3)
+attune_mCherry_plot <- attune_fp_table("mCherry");ggsave(file = "Plots/Attune/mCherry_plot.pdf", attune_mCherry_plot, height = 4, width = 3)
+attune_mTagBFP2_plot <- attune_fp_table("mTagBFP2");ggsave(file = "Plots/Attune/mTagBFP2_plot.pdf", attune_mTagBFP2_plot, height = 4, width = 3)
+attune_iRFP670_plot <- attune_fp_table("iRFP670");ggsave(file = "Plots/Attune/iRFP670_plot.pdf", attune_iRFP670_plot, height = 4, width = 3)
+attune_miRFP670_plot <- attune_fp_table("miRFP670");ggsave(file = "Plots/Attune/miRFP670_plot.pdf", attune_miRFP670_plot, height = 4, width = 3)
+attune_mNeonGreen_plot <- attune_fp_table("mNeonGreen");ggsave(file = "Plots/Attune/mNeonGreen_plot.pdf", attune_mNeonGreen_plot, height = 4, width = 3)
+attune_UnaG_plot <- attune_fp_table("UnaG");ggsave(file = "Plots/Attune/UnaG_plot.pdf", attune_UnaG_plot, height = 4, width = 3)
+attune_TDsmURFP_plot <- attune_fp_table("TDsmURFP");ggsave(file = "Plots/Attune/TDsmURFP_plot.pdf", attune_TDsmURFP_plot, height = 4, width = 3)
+attune_iRFP682_plot <- attune_fp_table("iRFP682");ggsave(file = "Plots/Attune/iRFP682_plot.pdf", attune_iRFP682_plot, height = 4, width = 3)
 
-lsr2_mScarlet_plot <- lsr2_fp_table("mScarlet.I");ggsave(file = "Plots/Lsr2/mScarlet_plot.pdf", mScarlet_plot, height = 4, width = 3)
-lsr2_EGFP_plot <- lsr2_fp_table("EGFP");ggsave(file = "Plots/Lsr2/EGFP_plot.pdf", EGFP_plot, height = 4, width = 3)
-lsr2_mCherry_plot <- lsr2_fp_table("mCherry");ggsave(file = "Plots/Lsr2/mCherry_plot.pdf", mCherry_plot, height = 4, width = 3)
-lsr2_mTagBFP2_plot <- lsr2_fp_table("mTagBFP2");ggsave(file = "Plots/Lsr2/mTagBFP2_plot.pdf", mTagBFP2_plot, height = 4, width = 3)
-lsr2_iRFP670_plot <- lsr2_fp_table("iRFP670");ggsave(file = "Plots/Lsr2/iRFP670_plot.pdf", iRFP670_plot, height = 4, width = 3)
-lsr2_miRFP670_plot <- lsr2_fp_table("miRFP670");ggsave(file = "Plots/Lsr2/miRFP670_plot.pdf", miRFP670_plot, height = 4, width = 3)
-lsr2_mNeonGreen_plot <- lsr2_fp_table("mNeonGreen");ggsave(file = "Plots/Lsr2/mNeonGreen_plot.pdf", mNeonGreen_plot, height = 4, width = 3)
-lsr2_UnaG_plot <- lsr2_fp_table("UnaG");ggsave(file = "Plots/Lsr2/UnaG_plot.pdf", UnaG_plot, height = 4, width = 3)
-lsr2_TDsmURFP_plot <- lsr2_fp_table("TDsmURFP");ggsave(file = "Plots/Lsr2/TDsmURFP_plot.pdf", TDsmURFP_plot, height = 4, width = 3)
-lsr2_iRFP682_plot <- lsr2_fp_table("iRFP682");ggsave(file = "Plots/lsr2/iRFP682_plot.pdf", iRFP682_plot, height = 4, width = 3)
+lsr2_mScarlet_plot <- lsr2_fp_table("mScarlet.I");ggsave(file = "Plots/Lsr2/mScarlet_plot.pdf", lsr2_mScarlet_plot, height = 4, width = 3)
+lsr2_EGFP_plot <- lsr2_fp_table("EGFP");ggsave(file = "Plots/Lsr2/EGFP_plot.pdf", lsr2_EGFP_plot, height = 4, width = 3)
+lsr2_mCherry_plot <- lsr2_fp_table("mCherry");ggsave(file = "Plots/Lsr2/mCherry_plot.pdf", lsr2_mCherry_plot, height = 4, width = 3)
+lsr2_mTagBFP2_plot <- lsr2_fp_table("mTagBFP2");ggsave(file = "Plots/Lsr2/mTagBFP2_plot.pdf", lsr2_mTagBFP2_plot, height = 4, width = 3)
+lsr2_iRFP670_plot <- lsr2_fp_table("iRFP670");ggsave(file = "Plots/Lsr2/iRFP670_plot.pdf", lsr2_iRFP670_plot, height = 4, width = 3)
+lsr2_miRFP670_plot <- lsr2_fp_table("miRFP670");ggsave(file = "Plots/Lsr2/miRFP670_plot.pdf", lsr2_miRFP670_plot, height = 4, width = 3)
+lsr2_mNeonGreen_plot <- lsr2_fp_table("mNeonGreen");ggsave(file = "Plots/Lsr2/mNeonGreen_plot.pdf", lsr2_mNeonGreen_plot, height = 4, width = 3)
+lsr2_UnaG_plot <- lsr2_fp_table("UnaG");ggsave(file = "Plots/Lsr2/UnaG_plot.pdf", lsr2_UnaG_plot, height = 4, width = 3)
+lsr2_TDsmURFP_plot <- lsr2_fp_table("TDsmURFP");ggsave(file = "Plots/Lsr2/TDsmURFP_plot.pdf", lsr2_TDsmURFP_plot, height = 4, width = 3)
+lsr2_iRFP682_plot <- lsr2_fp_table("iRFP682");ggsave(file = "Plots/lsr2/iRFP682_plot.pdf", lsr2_iRFP682_plot, height = 4, width = 3)
 
-aria_mScarlet_plot <- aria_fp_table("mScarlet.I");ggsave(file = "Plots/Aria/mScarlet_plot.pdf", mScarlet_plot, height = 4, width = 3)
-aria_EGFP_plot <- aria_fp_table("EGFP");ggsave(file = "Plots/Aria/EGFP_plot.pdf", EGFP_plot, height = 4, width = 3)
-aria_mCherry_plot <- aria_fp_table("mCherry");ggsave(file = "Plots/Aria/mCherry_plot.pdf", mCherry_plot, height = 4, width = 3)
-aria_mTagBFP2_plot <- aria_fp_table("mTagBFP2");ggsave(file = "Plots/Aria/mTagBFP2_plot.pdf", mTagBFP2_plot, height = 4, width = 3)
-aria_iRFP670_plot <- aria_fp_table("iRFP670");ggsave(file = "Plots/Aria/iRFP670_plot.pdf", iRFP670_plot, height = 4, width = 3)
-aria_miRFP670_plot <- aria_fp_table("miRFP670");ggsave(file = "Plots/Aria/miRFP670_plot.pdf", miRFP670_plot, height = 4, width = 3)
-aria_mNeonGreen_plot <- aria_fp_table("mNeonGreen");ggsave(file = "Plots/Aria/mNeonGreen_plot.pdf", mNeonGreen_plot, height = 4, width = 3)
-aria_UnaG_plot <- aria_fp_table("UnaG");ggsave(file = "Plots/Aria/UnaG_plot.pdf", UnaG_plot, height = 4, width = 3)
-aria_TDsmURFP_plot <- aria_fp_table("TDsmURFP");ggsave(file = "Plots/Aria/TDsmURFP_plot.pdf", TDsmURFP_plot, height = 4, width = 3)
-aria_iRFP682_plot <- aria_fp_table("iRFP682");ggsave(file = "Plots/Aria/iRFP682_plot.pdf", iRFP682_plot, height = 4, width = 3)
+aria_mScarlet_plot <- aria_fp_table("mScarlet.I");ggsave(file = "Plots/Aria/mScarlet_plot.pdf", aria_mScarlet_plot, height = 4, width = 3)
+aria_EGFP_plot <- aria_fp_table("EGFP");ggsave(file = "Plots/Aria/EGFP_plot.pdf", aria_EGFP_plot, height = 4, width = 3)
+aria_mCherry_plot <- aria_fp_table("mCherry");ggsave(file = "Plots/Aria/mCherry_plot.pdf", aria_mCherry_plot, height = 4, width = 3)
+aria_mTagBFP2_plot <- aria_fp_table("mTagBFP2");ggsave(file = "Plots/Aria/mTagBFP2_plot.pdf", aria_mTagBFP2_plot, height = 4, width = 3)
+aria_iRFP670_plot <- aria_fp_table("iRFP670");ggsave(file = "Plots/Aria/iRFP670_plot.pdf", aria_iRFP670_plot, height = 4, width = 3)
+aria_miRFP670_plot <- aria_fp_table("miRFP670");ggsave(file = "Plots/Aria/miRFP670_plot.pdf", aria_miRFP670_plot, height = 4, width = 3)
+aria_mNeonGreen_plot <- aria_fp_table("mNeonGreen");ggsave(file = "Plots/Aria/mNeonGreen_plot.pdf", aria_mNeonGreen_plot, height = 4, width = 3)
+aria_UnaG_plot <- aria_fp_table("UnaG");ggsave(file = "Plots/Aria/UnaG_plot.pdf", aria_UnaG_plot, height = 4, width = 3)
+aria_TDsmURFP_plot <- aria_fp_table("TDsmURFP");ggsave(file = "Plots/Aria/TDsmURFP_plot.pdf", aria_TDsmURFP_plot, height = 4, width = 3)
+aria_iRFP682_plot <- aria_fp_table("iRFP682");ggsave(file = "Plots/Aria/iRFP682_plot.pdf", aria_iRFP682_plot, height = 4, width = 3)
 
-sorp_mScarlet_plot <- sorp_fp_table("mScarlet.I");ggsave(file = "Plots/Aria_sorp/mScarlet_plot.pdf", mScarlet_plot, height = 4, width = 3)
-sorp_EGFP_plot <- sorp_fp_table("EGFP");ggsave(file = "Plots/Aria_sorp/EGFP_plot.pdf", EGFP_plot, height = 4, width = 3)
-sorp_mCherry_plot <- sorp_fp_table("mCherry");ggsave(file = "Plots/Aria_sorp/mCherry_plot.pdf", mCherry_plot, height = 4, width = 3)
-sorp_mTagBFP2_plot <- sorp_fp_table("mTagBFP2");ggsave(file = "Plots/Aria_sorp/mTagBFP2_plot.pdf", mTagBFP2_plot, height = 4, width = 3)
-sorp_iRFP670_plot <- sorp_fp_table("iRFP670");ggsave(file = "Plots/Aria_sorp/iRFP670_plot.pdf", iRFP670_plot, height = 4, width = 3)
-sorp_miRFP670_plot <- sorp_fp_table("miRFP670");ggsave(file = "Plots/Aria_sorp/miRFP670_plot.pdf", miRFP670_plot, height = 4, width = 3)
-sorp_mNeonGreen_plot <- sorp_fp_table("mNeonGreen");ggsave(file = "Plots/Aria_sorp/mNeonGreen_plot.pdf", mNeonGreen_plot, height = 4, width = 3)
-sorp_UnaG_plot <- sorp_fp_table("UnaG");ggsave(file = "Plots/Aria_sorp/UnaG_plot.pdf", UnaG_plot, height = 4, width = 3)
-sorp_TDsmURFP_plot <- sorp_fp_table("TDsmURFP");ggsave(file = "Plots/Aria_sorp/TDsmURFP_plot.pdf", TDsmURFP_plot, height = 4, width = 3)
-sorp_iRFP682_plot <- sorp_fp_table("iRFP682");ggsave(file = "Plots/Aria_sorp/iRFP682_plot.pdf", iRFP682_plot, height = 4, width = 3)
+sorp_mScarlet_plot <- sorp_fp_table("mScarlet.I");ggsave(file = "Plots/Aria_sorp/mScarlet_plot.pdf", sorp_mScarlet_plot, height = 4, width = 3)
+sorp_EGFP_plot <- sorp_fp_table("EGFP");ggsave(file = "Plots/Aria_sorp/EGFP_plot.pdf", sorp_EGFP_plot, height = 4, width = 3)
+sorp_mCherry_plot <- sorp_fp_table("mCherry");ggsave(file = "Plots/Aria_sorp/mCherry_plot.pdf", sorp_mCherry_plot, height = 4, width = 3)
+sorp_mTagBFP2_plot <- sorp_fp_table("mTagBFP2");ggsave(file = "Plots/Aria_sorp/mTagBFP2_plot.pdf", sorp_mTagBFP2_plot, height = 4, width = 3)
+sorp_iRFP670_plot <- sorp_fp_table("iRFP670");ggsave(file = "Plots/Aria_sorp/iRFP670_plot.pdf", sorp_iRFP670_plot, height = 4, width = 3)
+sorp_miRFP670_plot <- sorp_fp_table("miRFP670");ggsave(file = "Plots/Aria_sorp/miRFP670_plot.pdf", sorp_miRFP670_plot, height = 4, width = 3)
+sorp_mNeonGreen_plot <- sorp_fp_table("mNeonGreen");ggsave(file = "Plots/Aria_sorp/mNeonGreen_plot.pdf", sorp_mNeonGreen_plot, height = 4, width = 3)
+sorp_UnaG_plot <- sorp_fp_table("UnaG");ggsave(file = "Plots/Aria_sorp/UnaG_plot.pdf", sorp_UnaG_plot, height = 4, width = 3)
+sorp_TDsmURFP_plot <- sorp_fp_table("TDsmURFP");ggsave(file = "Plots/Aria_sorp/TDsmURFP_plot.pdf", sorp_TDsmURFP_plot, height = 4, width = 3)
+sorp_iRFP682_plot <- sorp_fp_table("iRFP682");ggsave(file = "Plots/Aria_sorp/iRFP682_plot.pdf", sorp_iRFP682_plot, height = 4, width = 3)
 
-fortessa_mScarlet_plot <- fortessa_fp_table("mScarlet.I");ggsave(file = "Plots/Fortessa/mScarlet_plot.pdf", mScarlet_plot, height = 4, width = 3)
-fortessa_EGFP_plot <- fortessa_fp_table("EGFP");ggsave(file = "Plots/Fortessa/EGFP_plot.pdf", EGFP_plot, height = 4, width = 3)
-fortessa_mCherry_plot <- fortessa_fp_table("mCherry");ggsave(file = "Plots/Fortessa/mCherry_plot.pdf", mCherry_plot, height = 4, width = 3)
-fortessa_mTagBFP2_plot <- fortessa_fp_table("mTagBFP2");ggsave(file = "Plots/Fortessa/mTagBFP2_plot.pdf", mTagBFP2_plot, height = 4, width = 3)
-fortessa_iRFP670_plot <- fortessa_fp_table("iRFP670");ggsave(file = "Plots/Fortessa/iRFP670_plot.pdf", iRFP670_plot, height = 4, width = 3)
-fortessa_miRFP670_plot <- fortessa_fp_table("miRFP670");ggsave(file = "Plots/Fortessa/miRFP670_plot.pdf", miRFP670_plot, height = 4, width = 3)
-fortessa_mNeonGreen_plot <- fortessa_fp_table("mNeonGreen");ggsave(file = "Plots/Fortessa/mNeonGreen_plot.pdf", mNeonGreen_plot, height = 4, width = 3)
-fortessa_UnaG_plot <- fortessa_fp_table("UnaG");ggsave(file = "Plots/Fortessa/UnaG_plot.pdf", UnaG_plot, height = 4, width = 3)
-fortessa_TDsmURFP_plot <- fortessa_fp_table("TDsmURFP");ggsave(file = "Plots/Fortessa/TDsmURFP_plot.pdf", TDsmURFP_plot, height = 4, width = 3)
-fortessa_iRFP682_plot <- fortessa_fp_table("iRFP682");ggsave(file = "Plots/Fortessa/iRFP682_plot.pdf", iRFP682_plot, height = 4, width = 3)
+fortessa_mScarlet_plot <- fortessa_fp_table("mScarlet.I");ggsave(file = "Plots/Fortessa/mScarlet_plot.pdf", fortessa_mScarlet_plot, height = 4, width = 3)
+fortessa_EGFP_plot <- fortessa_fp_table("EGFP");ggsave(file = "Plots/Fortessa/EGFP_plot.pdf", fortessa_EGFP_plot, height = 4, width = 3)
+fortessa_mCherry_plot <- fortessa_fp_table("mCherry");ggsave(file = "Plots/Fortessa/mCherry_plot.pdf", fortessa_mCherry_plot, height = 4, width = 3)
+fortessa_mTagBFP2_plot <- fortessa_fp_table("mTagBFP2");ggsave(file = "Plots/Fortessa/mTagBFP2_plot.pdf", fortessa_mTagBFP2_plot, height = 4, width = 3)
+fortessa_iRFP670_plot <- fortessa_fp_table("iRFP670");ggsave(file = "Plots/Fortessa/iRFP670_plot.pdf", fortessa_iRFP670_plot, height = 4, width = 3)
+fortessa_miRFP670_plot <- fortessa_fp_table("miRFP670");ggsave(file = "Plots/Fortessa/miRFP670_plot.pdf", fortessa_miRFP670_plot, height = 4, width = 3)
+fortessa_mNeonGreen_plot <- fortessa_fp_table("mNeonGreen");ggsave(file = "Plots/Fortessa/mNeonGreen_plot.pdf", fortessa_mNeonGreen_plot, height = 4, width = 3)
+fortessa_UnaG_plot <- fortessa_fp_table("UnaG");ggsave(file = "Plots/Fortessa/UnaG_plot.pdf", fortessa_UnaG_plot, height = 4, width = 3)
+fortessa_TDsmURFP_plot <- fortessa_fp_table("TDsmURFP");ggsave(file = "Plots/Fortessa/TDsmURFP_plot.pdf", fortessa_TDsmURFP_plot, height = 4, width = 3)
+fortessa_iRFP682_plot <- fortessa_fp_table("iRFP682");ggsave(file = "Plots/Fortessa/iRFP682_plot.pdf", fortessa_iRFP682_plot, height = 4, width = 3)
 ```
 
 
