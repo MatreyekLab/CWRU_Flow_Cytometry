@@ -1,2 +1,382 @@
 # CWRU_Flow_Cytometry
 Optimizing the best laser and filter combinations for each instrument
+
+CWRU_Flow_Cytometry
+================
+Kenneth Matreyek
+8/10/2020
+
+``` r
+attune_fp_table <- function(input_string){
+  fp_file_location <- paste("Spectra/",input_string,".csv", sep = "")
+  excitation_name <- paste(input_string,".ex", sep = "")
+  emission_name <- paste(input_string,".em", sep = "")
+  
+  fp <- read.csv(file = fp_file_location, header = T, stringsAsFactors = F)
+  fp_excitation <- data.frame("laser" = attune_lasers$laser, "excitation" = attune_lasers$excitation)
+  fp_excitation$efficiency <- 0
+  for(x in 1:nrow(fp_excitation)){if(fp_excitation$excitation[x] %in% fp$wavelength){
+    fp_excitation$efficiency[x] <- fp[fp$wavelength ==  fp_excitation$excitation[x],excitation_name]
+    } else{fp_excitation$efficiency[x] <- 0}
+  }
+  
+  fp_emission <- data.frame("laser" = attune_detectors$laser,"mid" = attune_detectors$mid)
+  for(x in 1:nrow(fp_emission)){
+    temp_vector <- fp[fp$wavelength >  attune_detectors[attune_detectors$mid == fp_emission$mid[x],"min"] & fp$wavelength < attune_detectors[attune_detectors$mid == fp_emission$mid[x],"max"],emission_name]
+    temp_vector[is.na(temp_vector)] <- 0
+    fp_emission$efficiency[x] <- sum(temp_vector)
+  }
+  
+  fp_output <- data.frame(matrix(ncol = nrow(fp_excitation), nrow = nrow(fp_emission)))
+  for(x in 1:ncol(fp_output)){
+    for(y in 1:nrow(fp_output)){
+      excitation_laser <- fp_excitation[x,"laser"]
+      emission_laser <- fp_emission[y,"laser"]
+      if(excitation_laser == emission_laser){
+        excitation_efficiency <- fp_excitation[x,"efficiency"]
+        emission_efficiency <- fp_emission[y,"efficiency"]
+        efficiency_product <- excitation_efficiency * emission_efficiency
+        fp_output[y,x] <- round(efficiency_product,2)
+      } else{fp_output[y,x] <- 0}
+    }
+  }
+  fp_output[is.na(fp_output)] <- 0
+  colnames(fp_output) <- attune_lasers$laser
+  rownames(fp_output) <- paste(attune_detectors$laser,"_",attune_detectors$mid,"/",attune_detectors$band,sep="")
+  
+  fp_output$detector <- rownames(fp_output)
+  fp_output_melted <- melt(fp_output, id = "detector")
+  
+  fp_output_melted[fp_output_melted$value > 50,"value"] <- 50
+  
+  fp_plot <- ggplot() + theme_bw() + 
+    theme(axis.text.x.bottom = element_text(angle = 45, hjust = 1)) +
+    scale_fill_continuous(low = "white", high = "black", limits = c(0,50)) +
+    ggtitle(input_string) +
+    labs(x= NULL, y = NULL) +
+    geom_tile(data = fp_output_melted, aes(x = variable, y = detector, fill = value))
+  return(fp_plot)
+}
+
+
+
+lsr2_fp_table <- function(input_string){
+  fp_file_location <- paste("Spectra/",input_string,".csv", sep = "")
+  excitation_name <- paste(input_string,".ex", sep = "")
+  emission_name <- paste(input_string,".em", sep = "")
+  
+  fp <- read.csv(file = fp_file_location, header = T, stringsAsFactors = F)
+  fp_excitation <- data.frame("laser" = lsr2_lasers$laser, "excitation" = lsr2_lasers$excitation)
+  fp_excitation$efficiency <- 0
+  for(x in 1:nrow(fp_excitation)){if(fp_excitation$excitation[x] %in% fp$wavelength){
+    fp_excitation$efficiency[x] <- fp[fp$wavelength ==  fp_excitation$excitation[x],excitation_name]
+    } else{fp_excitation$efficiency[x] <- 0}
+  }
+  
+  fp_emission <- data.frame("laser" = lsr2_detectors$laser,"mid" = lsr2_detectors$mid)
+  for(x in 1:nrow(fp_emission)){
+    temp_vector <- fp[fp$wavelength >  lsr2_detectors[lsr2_detectors$mid == fp_emission$mid[x],"min"] & fp$wavelength < lsr2_detectors[lsr2_detectors$mid == fp_emission$mid[x],"max"],emission_name]
+    temp_vector[is.na(temp_vector)] <- 0
+    fp_emission$efficiency[x] <- sum(temp_vector)
+  }
+  
+  fp_output <- data.frame(matrix(ncol = nrow(fp_excitation), nrow = nrow(fp_emission)))
+  for(x in 1:ncol(fp_output)){
+    for(y in 1:nrow(fp_output)){
+      excitation_laser <- fp_excitation[x,"laser"]
+      emission_laser <- fp_emission[y,"laser"]
+      if(excitation_laser == emission_laser){
+        excitation_efficiency <- fp_excitation[x,"efficiency"]
+        emission_efficiency <- fp_emission[y,"efficiency"]
+        efficiency_product <- excitation_efficiency * emission_efficiency
+        fp_output[y,x] <- round(efficiency_product,2)
+      } else{fp_output[y,x] <- 0}
+    }
+  }
+  fp_output[is.na(fp_output)] <- 0
+  colnames(fp_output) <- lsr2_lasers$laser
+  rownames(fp_output) <- paste(lsr2_detectors$laser,"_",lsr2_detectors$mid,"/",lsr2_detectors$band,sep="")
+  
+  fp_output$detector <- rownames(fp_output)
+  fp_output_melted <- melt(fp_output, id = "detector")
+  
+  fp_output_melted[fp_output_melted$value > 50,"value"] <- 50
+  
+  fp_plot <- ggplot() + theme_bw() + 
+    theme(axis.text.x.bottom = element_text(angle = 45, hjust = 1)) +
+    scale_fill_continuous(low = "white", high = "black", limits = c(0,50)) +
+    ggtitle(input_string) +
+    labs(x= NULL, y = NULL) +
+    geom_tile(data = fp_output_melted, aes(x = variable, y = detector, fill = value))
+  return(fp_plot)
+}
+
+aria_fp_table <- function(input_string){
+  fp_file_location <- paste("Spectra/",input_string,".csv", sep = "")
+  excitation_name <- paste(input_string,".ex", sep = "")
+  emission_name <- paste(input_string,".em", sep = "")
+  
+  fp <- read.csv(file = fp_file_location, header = T, stringsAsFactors = F)
+  fp_excitation <- data.frame("laser" = aria_lasers$laser, "excitation" = aria_lasers$excitation)
+  fp_excitation$efficiency <- 0
+  for(x in 1:nrow(fp_excitation)){if(fp_excitation$excitation[x] %in% fp$wavelength){
+    fp_excitation$efficiency[x] <- fp[fp$wavelength ==  fp_excitation$excitation[x],excitation_name]
+    } else{fp_excitation$efficiency[x] <- 0}
+  }
+  
+  fp_emission <- data.frame("laser" = aria_detectors$laser,"mid" = aria_detectors$mid)
+  for(x in 1:nrow(fp_emission)){
+    temp_vector <- fp[fp$wavelength >  aria_detectors[aria_detectors$mid == fp_emission$mid[x],"min"] & fp$wavelength < aria_detectors[aria_detectors$mid == fp_emission$mid[x],"max"],emission_name]
+    temp_vector[is.na(temp_vector)] <- 0
+    fp_emission$efficiency[x] <- sum(temp_vector)
+  }
+  
+  fp_output <- data.frame(matrix(ncol = nrow(fp_excitation), nrow = nrow(fp_emission)))
+  for(x in 1:ncol(fp_output)){
+    for(y in 1:nrow(fp_output)){
+      excitation_laser <- fp_excitation[x,"laser"]
+      emission_laser <- fp_emission[y,"laser"]
+      if(excitation_laser == emission_laser){
+        excitation_efficiency <- fp_excitation[x,"efficiency"]
+        emission_efficiency <- fp_emission[y,"efficiency"]
+        efficiency_product <- excitation_efficiency * emission_efficiency
+        fp_output[y,x] <- round(efficiency_product,2)
+      } else{fp_output[y,x] <- 0}
+    }
+  }
+  fp_output[is.na(fp_output)] <- 0
+  colnames(fp_output) <- aria_lasers$laser
+  rownames(fp_output) <- paste(aria_detectors$laser,"_",aria_detectors$mid,"/",aria_detectors$band,sep="")
+  
+  fp_output$detector <- rownames(fp_output)
+  fp_output_melted <- melt(fp_output, id = "detector")
+  
+  fp_output_melted[fp_output_melted$value > 50,"value"] <- 50
+  
+  fp_plot <- ggplot() + theme_bw() + 
+    theme(axis.text.x.bottom = element_text(angle = 45, hjust = 1)) +
+    scale_fill_continuous(low = "white", high = "black", limits = c(0,50)) +
+    ggtitle(input_string) +
+    labs(x= NULL, y = NULL) +
+    geom_tile(data = fp_output_melted, aes(x = variable, y = detector, fill = value))
+  return(fp_plot)
+}
+
+sorp_fp_table <- function(input_string){
+  fp_file_location <- paste("Spectra/",input_string,".csv", sep = "")
+  excitation_name <- paste(input_string,".ex", sep = "")
+  emission_name <- paste(input_string,".em", sep = "")
+  
+  fp <- read.csv(file = fp_file_location, header = T, stringsAsFactors = F)
+  fp_excitation <- data.frame("laser" = sorp_lasers$laser, "excitation" = sorp_lasers$excitation)
+  fp_excitation$efficiency <- 0
+  for(x in 1:nrow(fp_excitation)){if(fp_excitation$excitation[x] %in% fp$wavelength){
+    fp_excitation$efficiency[x] <- fp[fp$wavelength ==  fp_excitation$excitation[x],excitation_name]
+    } else{fp_excitation$efficiency[x] <- 0}
+  }
+  
+  fp_emission <- data.frame("laser" = sorp_detectors$laser,"mid" = sorp_detectors$mid)
+  for(x in 1:nrow(fp_emission)){
+    temp_vector <- fp[fp$wavelength >  sorp_detectors[sorp_detectors$mid == fp_emission$mid[x],"min"] & fp$wavelength < sorp_detectors[sorp_detectors$mid == fp_emission$mid[x],"max"],emission_name]
+    temp_vector[is.na(temp_vector)] <- 0
+    fp_emission$efficiency[x] <- sum(temp_vector)
+  }
+  
+  fp_output <- data.frame(matrix(ncol = nrow(fp_excitation), nrow = nrow(fp_emission)))
+  for(x in 1:ncol(fp_output)){
+    for(y in 1:nrow(fp_output)){
+      excitation_laser <- fp_excitation[x,"laser"]
+      emission_laser <- fp_emission[y,"laser"]
+      if(excitation_laser == emission_laser){
+        excitation_efficiency <- fp_excitation[x,"efficiency"]
+        emission_efficiency <- fp_emission[y,"efficiency"]
+        efficiency_product <- excitation_efficiency * emission_efficiency
+        fp_output[y,x] <- round(efficiency_product,2)
+      } else{fp_output[y,x] <- 0}
+    }
+  }
+  fp_output[is.na(fp_output)] <- 0
+  colnames(fp_output) <- sorp_lasers$laser
+  rownames(fp_output) <- paste(sorp_detectors$laser,"_",sorp_detectors$mid,"/",sorp_detectors$band,sep="")
+  
+  fp_output$detector <- rownames(fp_output)
+  fp_output_melted <- melt(fp_output, id = "detector")
+  
+  fp_output_melted[fp_output_melted$value > 50,"value"] <- 50
+  
+  fp_plot <- ggplot() + theme_bw() + 
+    theme(axis.text.x.bottom = element_text(angle = 45, hjust = 1)) +
+    scale_fill_continuous(low = "white", high = "black", limits = c(0,50)) +
+    ggtitle(input_string) +
+    labs(x= NULL, y = NULL) +
+    geom_tile(data = fp_output_melted, aes(x = variable, y = detector, fill = value))
+  return(fp_plot)
+}
+
+fortessa_fp_table <- function(input_string){
+  fp_file_location <- paste("Spectra/",input_string,".csv", sep = "")
+  excitation_name <- paste(input_string,".ex", sep = "")
+  emission_name <- paste(input_string,".em", sep = "")
+  
+  fp <- read.csv(file = fp_file_location, header = T, stringsAsFactors = F)
+  fp_excitation <- data.frame("laser" = fortessa_lasers$laser, "excitation" = fortessa_lasers$excitation)
+  fp_excitation$efficiency <- 0
+  for(x in 1:nrow(fp_excitation)){if(fp_excitation$excitation[x] %in% fp$wavelength){
+    fp_excitation$efficiency[x] <- fp[fp$wavelength ==  fp_excitation$excitation[x],excitation_name]
+    } else{fp_excitation$efficiency[x] <- 0}
+  }
+  
+  fp_emission <- data.frame("laser" = fortessa_detectors$laser,"mid" = fortessa_detectors$mid)
+  for(x in 1:nrow(fp_emission)){
+    temp_vector <- fp[fp$wavelength >  fortessa_detectors[fortessa_detectors$mid == fp_emission$mid[x],"min"] & fp$wavelength < fortessa_detectors[fortessa_detectors$mid == fp_emission$mid[x],"max"],emission_name]
+    temp_vector[is.na(temp_vector)] <- 0
+    fp_emission$efficiency[x] <- sum(temp_vector)
+  }
+  
+  fp_output <- data.frame(matrix(ncol = nrow(fp_excitation), nrow = nrow(fp_emission)))
+  for(x in 1:ncol(fp_output)){
+    for(y in 1:nrow(fp_output)){
+      excitation_laser <- fp_excitation[x,"laser"]
+      emission_laser <- fp_emission[y,"laser"]
+      if(excitation_laser == emission_laser){
+        excitation_efficiency <- fp_excitation[x,"efficiency"]
+        emission_efficiency <- fp_emission[y,"efficiency"]
+        efficiency_product <- excitation_efficiency * emission_efficiency
+        fp_output[y,x] <- round(efficiency_product,2)
+      } else{fp_output[y,x] <- 0}
+    }
+  }
+  fp_output[is.na(fp_output)] <- 0
+  colnames(fp_output) <- fortessa_lasers$laser
+  rownames(fp_output) <- paste(fortessa_detectors$laser,"_",fortessa_detectors$mid,"/",fortessa_detectors$band,sep="")
+  
+  fp_output$detector <- rownames(fp_output)
+  fp_output_melted <- melt(fp_output, id = "detector")
+  
+  fp_output_melted[fp_output_melted$value > 50,"value"] <- 50
+  
+  fp_plot <- ggplot() + theme_bw() + 
+    theme(axis.text.x.bottom = element_text(angle = 45, hjust = 1)) +
+    scale_fill_continuous(low = "white", high = "black", limits = c(0,50)) +
+    ggtitle(input_string) +
+    labs(x= NULL, y = NULL) +
+    geom_tile(data = fp_output_melted, aes(x = variable, y = detector, fill = value))
+  return(fp_plot)
+}
+```
+
+``` r
+attune_mScarlet_plot <- attune_fp_table("mScarlet.I");ggsave(file = "Plots/Attune/mScarlet_plot.pdf", attune_mScarlet_plot, height = 4, width = 3)
+attune_EGFP_plot <- attune_fp_table("EGFP");ggsave(file = "Plots/Attune/EGFP_plot.pdf", attune_EGFP_plot, height = 4, width = 3)
+attune_mCherry_plot <- attune_fp_table("mCherry");ggsave(file = "Plots/Attune/mCherry_plot.pdf", attune_mCherry_plot, height = 4, width = 3)
+attune_mTagBFP2_plot <- attune_fp_table("mTagBFP2");ggsave(file = "Plots/Attune/mTagBFP2_plot.pdf", attune_mTagBFP2_plot, height = 4, width = 3)
+attune_iRFP670_plot <- attune_fp_table("iRFP670");ggsave(file = "Plots/Attune/iRFP670_plot.pdf", attune_iRFP670_plot, height = 4, width = 3)
+attune_miRFP670_plot <- attune_fp_table("miRFP670");ggsave(file = "Plots/Attune/miRFP670_plot.pdf", attune_miRFP670_plot, height = 4, width = 3)
+attune_mNeonGreen_plot <- attune_fp_table("mNeonGreen");ggsave(file = "Plots/Attune/mNeonGreen_plot.pdf", attune_mNeonGreen_plot, height = 4, width = 3)
+attune_UnaG_plot <- attune_fp_table("UnaG");ggsave(file = "Plots/Attune/UnaG_plot.pdf", attune_UnaG_plot, height = 4, width = 3)
+attune_TDsmURFP_plot <- attune_fp_table("TDsmURFP");ggsave(file = "Plots/Attune/TDsmURFP_plot.pdf", attune_TDsmURFP_plot, height = 4, width = 3)
+attune_iRFP682_plot <- attune_fp_table("iRFP682");ggsave(file = "Plots/Attune/iRFP682_plot.pdf", attune_iRFP682_plot, height = 4, width = 3)
+
+lsr2_mScarlet_plot <- lsr2_fp_table("mScarlet.I");ggsave(file = "Plots/Lsr2/mScarlet_plot.pdf", lsr2_mScarlet_plot, height = 4, width = 3)
+lsr2_EGFP_plot <- lsr2_fp_table("EGFP");ggsave(file = "Plots/Lsr2/EGFP_plot.pdf", lsr2_EGFP_plot, height = 4, width = 3)
+lsr2_mCherry_plot <- lsr2_fp_table("mCherry");ggsave(file = "Plots/Lsr2/mCherry_plot.pdf", lsr2_mCherry_plot, height = 4, width = 3)
+lsr2_mTagBFP2_plot <- lsr2_fp_table("mTagBFP2");ggsave(file = "Plots/Lsr2/mTagBFP2_plot.pdf", lsr2_mTagBFP2_plot, height = 4, width = 3)
+lsr2_iRFP670_plot <- lsr2_fp_table("iRFP670");ggsave(file = "Plots/Lsr2/iRFP670_plot.pdf", lsr2_iRFP670_plot, height = 4, width = 3)
+lsr2_miRFP670_plot <- lsr2_fp_table("miRFP670");ggsave(file = "Plots/Lsr2/miRFP670_plot.pdf", lsr2_miRFP670_plot, height = 4, width = 3)
+lsr2_mNeonGreen_plot <- lsr2_fp_table("mNeonGreen");ggsave(file = "Plots/Lsr2/mNeonGreen_plot.pdf", lsr2_mNeonGreen_plot, height = 4, width = 3)
+lsr2_UnaG_plot <- lsr2_fp_table("UnaG");ggsave(file = "Plots/Lsr2/UnaG_plot.pdf", lsr2_UnaG_plot, height = 4, width = 3)
+lsr2_TDsmURFP_plot <- lsr2_fp_table("TDsmURFP");ggsave(file = "Plots/Lsr2/TDsmURFP_plot.pdf", lsr2_TDsmURFP_plot, height = 4, width = 3)
+lsr2_iRFP682_plot <- lsr2_fp_table("iRFP682");ggsave(file = "Plots/lsr2/iRFP682_plot.pdf", lsr2_iRFP682_plot, height = 4, width = 3)
+
+aria_mScarlet_plot <- aria_fp_table("mScarlet.I");ggsave(file = "Plots/Aria/mScarlet_plot.pdf", aria_mScarlet_plot, height = 4, width = 3)
+aria_EGFP_plot <- aria_fp_table("EGFP");ggsave(file = "Plots/Aria/EGFP_plot.pdf", aria_EGFP_plot, height = 4, width = 3)
+aria_mCherry_plot <- aria_fp_table("mCherry");ggsave(file = "Plots/Aria/mCherry_plot.pdf", aria_mCherry_plot, height = 4, width = 3)
+aria_mTagBFP2_plot <- aria_fp_table("mTagBFP2");ggsave(file = "Plots/Aria/mTagBFP2_plot.pdf", aria_mTagBFP2_plot, height = 4, width = 3)
+aria_iRFP670_plot <- aria_fp_table("iRFP670");ggsave(file = "Plots/Aria/iRFP670_plot.pdf", aria_iRFP670_plot, height = 4, width = 3)
+aria_miRFP670_plot <- aria_fp_table("miRFP670");ggsave(file = "Plots/Aria/miRFP670_plot.pdf", aria_miRFP670_plot, height = 4, width = 3)
+aria_mNeonGreen_plot <- aria_fp_table("mNeonGreen");ggsave(file = "Plots/Aria/mNeonGreen_plot.pdf", aria_mNeonGreen_plot, height = 4, width = 3)
+aria_UnaG_plot <- aria_fp_table("UnaG");ggsave(file = "Plots/Aria/UnaG_plot.pdf", aria_UnaG_plot, height = 4, width = 3)
+aria_TDsmURFP_plot <- aria_fp_table("TDsmURFP");ggsave(file = "Plots/Aria/TDsmURFP_plot.pdf", aria_TDsmURFP_plot, height = 4, width = 3)
+aria_iRFP682_plot <- aria_fp_table("iRFP682");ggsave(file = "Plots/Aria/iRFP682_plot.pdf", aria_iRFP682_plot, height = 4, width = 3)
+
+sorp_mScarlet_plot <- sorp_fp_table("mScarlet.I");ggsave(file = "Plots/Aria_sorp/mScarlet_plot.pdf", sorp_mScarlet_plot, height = 4, width = 3)
+sorp_EGFP_plot <- sorp_fp_table("EGFP");ggsave(file = "Plots/Aria_sorp/EGFP_plot.pdf", sorp_EGFP_plot, height = 4, width = 3)
+sorp_mCherry_plot <- sorp_fp_table("mCherry");ggsave(file = "Plots/Aria_sorp/mCherry_plot.pdf", sorp_mCherry_plot, height = 4, width = 3)
+sorp_mTagBFP2_plot <- sorp_fp_table("mTagBFP2");ggsave(file = "Plots/Aria_sorp/mTagBFP2_plot.pdf", sorp_mTagBFP2_plot, height = 4, width = 3)
+sorp_iRFP670_plot <- sorp_fp_table("iRFP670");ggsave(file = "Plots/Aria_sorp/iRFP670_plot.pdf", sorp_iRFP670_plot, height = 4, width = 3)
+sorp_miRFP670_plot <- sorp_fp_table("miRFP670");ggsave(file = "Plots/Aria_sorp/miRFP670_plot.pdf", sorp_miRFP670_plot, height = 4, width = 3)
+sorp_mNeonGreen_plot <- sorp_fp_table("mNeonGreen");ggsave(file = "Plots/Aria_sorp/mNeonGreen_plot.pdf", sorp_mNeonGreen_plot, height = 4, width = 3)
+sorp_UnaG_plot <- sorp_fp_table("UnaG");ggsave(file = "Plots/Aria_sorp/UnaG_plot.pdf", sorp_UnaG_plot, height = 4, width = 3)
+sorp_TDsmURFP_plot <- sorp_fp_table("TDsmURFP");ggsave(file = "Plots/Aria_sorp/TDsmURFP_plot.pdf", sorp_TDsmURFP_plot, height = 4, width = 3)
+sorp_iRFP682_plot <- sorp_fp_table("iRFP682");ggsave(file = "Plots/Aria_sorp/iRFP682_plot.pdf", sorp_iRFP682_plot, height = 4, width = 3)
+
+fortessa_mScarlet_plot <- fortessa_fp_table("mScarlet.I");ggsave(file = "Plots/Fortessa/mScarlet_plot.pdf", fortessa_mScarlet_plot, height = 4, width = 3)
+fortessa_EGFP_plot <- fortessa_fp_table("EGFP");ggsave(file = "Plots/Fortessa/EGFP_plot.pdf", fortessa_EGFP_plot, height = 4, width = 3)
+fortessa_mCherry_plot <- fortessa_fp_table("mCherry");ggsave(file = "Plots/Fortessa/mCherry_plot.pdf", fortessa_mCherry_plot, height = 4, width = 3)
+fortessa_mTagBFP2_plot <- fortessa_fp_table("mTagBFP2");ggsave(file = "Plots/Fortessa/mTagBFP2_plot.pdf", fortessa_mTagBFP2_plot, height = 4, width = 3)
+fortessa_iRFP670_plot <- fortessa_fp_table("iRFP670");ggsave(file = "Plots/Fortessa/iRFP670_plot.pdf", fortessa_iRFP670_plot, height = 4, width = 3)
+fortessa_miRFP670_plot <- fortessa_fp_table("miRFP670");ggsave(file = "Plots/Fortessa/miRFP670_plot.pdf", fortessa_miRFP670_plot, height = 4, width = 3)
+fortessa_mNeonGreen_plot <- fortessa_fp_table("mNeonGreen");ggsave(file = "Plots/Fortessa/mNeonGreen_plot.pdf", fortessa_mNeonGreen_plot, height = 4, width = 3)
+fortessa_UnaG_plot <- fortessa_fp_table("UnaG");ggsave(file = "Plots/Fortessa/UnaG_plot.pdf", fortessa_UnaG_plot, height = 4, width = 3)
+fortessa_TDsmURFP_plot <- fortessa_fp_table("TDsmURFP");ggsave(file = "Plots/Fortessa/TDsmURFP_plot.pdf", fortessa_TDsmURFP_plot, height = 4, width = 3)
+fortessa_iRFP682_plot <- fortessa_fp_table("iRFP682");ggsave(file = "Plots/Fortessa/iRFP682_plot.pdf", fortessa_iRFP682_plot, height = 4, width = 3)
+```
+
+``` r
+library(patchwork)
+
+attune_combined_plot <- attune_mTagBFP2_plot/attune_EGFP_plot|attune_mNeonGreen_plot/attune_UnaG_plot|attune_mScarlet_plot/attune_mCherry_plot|attune_iRFP670_plot/attune_miRFP670_plot|attune_TDsmURFP_plot/plot_spacer() 
+attune_patchwork <- attune_combined_plot + plot_annotation(title = 'Attune')
+attune_patchwork
+```
+
+![](CWRU_Flow_Cytometry_files/figure-gfm/Combined%20plots-1.png)<!-- -->
+
+``` r
+ggsave(file = "Plots/Attune_plots.pdf",attune_patchwork, height = 8, width = 16)
+ggsave(file = "/Users/kmatreyek/Dropbox/Website/Plots/Flow_cytometry/Attune_plots.png", attune_patchwork, height = 8, width = 16)
+
+lsr2_combined_plot <- lsr2_mTagBFP2_plot/lsr2_EGFP_plot|lsr2_mNeonGreen_plot/lsr2_UnaG_plot|lsr2_mScarlet_plot/lsr2_mCherry_plot|lsr2_iRFP670_plot/lsr2_miRFP670_plot|lsr2_TDsmURFP_plot/plot_spacer() 
+lsr2_patchwork <- lsr2_combined_plot + plot_annotation(title = 'LSR2')
+lsr2_patchwork
+```
+
+![](CWRU_Flow_Cytometry_files/figure-gfm/Combined%20plots-2.png)<!-- -->
+
+``` r
+ggsave(file = "Plots/Lsr2_plots.pdf",lsr2_patchwork, height = 8, width = 16)
+ggsave(file = "/Users/kmatreyek/Dropbox/Website/Plots/Flow_cytometry/Lsr2_plots.png", lsr2_patchwork, height = 8, width = 16)
+
+aria_combined_plot <- aria_mTagBFP2_plot/aria_EGFP_plot|aria_mNeonGreen_plot/aria_UnaG_plot|aria_mScarlet_plot/aria_mCherry_plot|aria_iRFP670_plot/aria_miRFP670_plot|aria_TDsmURFP_plot/plot_spacer() 
+aria_patchwork <- aria_combined_plot + plot_annotation(title = 'Aria')
+aria_patchwork
+```
+
+![](CWRU_Flow_Cytometry_files/figure-gfm/Combined%20plots-3.png)<!-- -->
+
+``` r
+ggsave(file = "Plots/Aria_plots.pdf",aria_patchwork, height = 8, width = 16)
+ggsave(file = "/Users/kmatreyek/Dropbox/Website/Plots/Flow_cytometry/Aria_plots.png", aria_patchwork, height = 8, width = 16)
+
+sorp_combined_plot <- sorp_mTagBFP2_plot/sorp_EGFP_plot|sorp_mNeonGreen_plot/sorp_UnaG_plot|sorp_mScarlet_plot/sorp_mCherry_plot|sorp_iRFP670_plot/sorp_miRFP670_plot|sorp_TDsmURFP_plot/plot_spacer() 
+sorp_patchwork <- sorp_combined_plot + plot_annotation(title = 'Aria_SORP')
+sorp_patchwork
+```
+
+![](CWRU_Flow_Cytometry_files/figure-gfm/Combined%20plots-4.png)<!-- -->
+
+``` r
+ggsave(file = "Plots/Aria_sorp_plots.pdf",sorp_patchwork, height = 8, width = 16)
+ggsave(file = "/Users/kmatreyek/Dropbox/Website/Plots/Flow_cytometry/Aria_sorp_plots.png", sorp_patchwork, height = 8, width = 16)
+
+fortessa_combined_plot <- fortessa_mTagBFP2_plot/fortessa_EGFP_plot|fortessa_mNeonGreen_plot/fortessa_UnaG_plot|fortessa_mScarlet_plot/fortessa_mCherry_plot|fortessa_iRFP670_plot/fortessa_miRFP670_plot|fortessa_TDsmURFP_plot/plot_spacer() 
+fortessa_patchwork <- fortessa_combined_plot + plot_annotation(title = 'Fortessa')
+fortessa_patchwork
+```
+
+![](CWRU_Flow_Cytometry_files/figure-gfm/Combined%20plots-5.png)<!-- -->
+
+``` r
+ggsave(file = "Plots/Fortessa_plots.pdf",fortessa_patchwork, height = 8, width = 16)
+ggsave(file = "/Users/kmatreyek/Dropbox/Website/Plots/Flow_cytometry/Fortessa_plots.png", fortessa_patchwork, height = 8, width = 16)
+```
