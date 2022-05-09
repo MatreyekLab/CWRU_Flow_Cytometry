@@ -1,58 +1,9 @@
----
-title: "CWRU_Flow_Cytometry"
-author: "Kenneth Matreyek"
-date: "8/10/2020"
-output: github_document
----
+CWRU_Flow_Cytometry
+================
+Kenneth Matreyek
+8/10/2020
 
-```{r Original setup, include=FALSE}
-rm(list = ls())
-library(tidyverse)
-library(reshape)
-
-attune_lasers <- data.frame("laser" = c("V-405","B-488","YG-561","R-638"), "excitation" = c(405,488,561,638))
-attune_detectors <- data.frame(
-  "laser" = c(c("V-405","V-405","V-405","V-405"),c("B-488","B-488","B-488"),c("YG-561","YG-561","YG-561","YG-561"),c("R-638","R-638","R-638")),
-  "mid" = c(c(440,512,603,710),c(530,590,695),c(585,620,695,780),c(670,720,780)),
-  "band" = c(c(50,25,48,50),c(30,40,40),c(16,15,40,60),c(14,30,60)))
-attune_detectors$min <- attune_detectors$mid - attune_detectors$band
-attune_detectors$max <- attune_detectors$mid + attune_detectors$band
-
-lsr2_lasers <- data.frame("laser" = c("UV-355","V-405","B-488","YG-561","R-640"), "excitation" = c(355,405,488,561,640))
-lsr2_detectors <- data.frame(
-  "laser" = c(c("UV-355","UV-355"),c("V-405","V-405","V-405","V-405","V-405","V-405"),c("B-488","B-488"),c("YG-561","YG-561","YG-561","YG-561","YG-561"),c("R-640","R-640","R-640")),
-  "mid" = c(c(440,670),c(440,520,575,610,660,710),c(525,695),c(582,610,670,710,780),c(660,710,780)),
-  "band" = c(c(40,40),c(40,40,20,20,20,50),c(50,40),c(15,20,14,50,60),c(20,40,60)))
-lsr2_detectors$min <- lsr2_detectors$mid - lsr2_detectors$band
-lsr2_detectors$max <- lsr2_detectors$mid + lsr2_detectors$band
-
-aria_lasers <- data.frame("laser" = c("V-405","B-488","R-633"), "excitation" = c(405,488,633))
-aria_detectors <- data.frame(
-  "laser" = c(c("V-405","V-405","V-405"),c("B-488","B-488","B-488","B-488","B-488","B-488"),c("R-633","R-633","R-633")),
-  "mid" = c(c(450,530,595),c(530,576,610,675,710,780),c(660,710,780)),
-  "band" = c(c(40,30,40),c(30,26,20,20,40,60),c(20,40,60)))
-aria_detectors$min <- aria_detectors$mid - aria_detectors$band
-aria_detectors$max <- aria_detectors$mid + aria_detectors$band
-
-sorp_lasers <- data.frame("laser" = c("UV-355","V-405","B-488","G-532","R-642"), "excitation" = c(355,405,488,532,642))
-sorp_detectors <- data.frame(
-  "laser" = c(c("UV-355","UV-355"),c("V-405","V-405","V-405","V-405","V-405","V-405"),c("B-488","B-488"),c("G-532","G-532","G-532","G-532","G-532"),c("R-642","R-642","R-642")),
-  "mid" = c(c(379,740),c(450,525,610,670,710,780),c(515,695),c(575,610,670,695,780),c(670,730,780)),
-  "band" = c(c(28,35),c(50,50,20,30,50,60),c(20,40),c(26,20,30,40,60),c(30,45,60)))
-sorp_detectors$min <- sorp_detectors$mid - sorp_detectors$band
-sorp_detectors$max <- sorp_detectors$mid + sorp_detectors$band
-
-fortessa_lasers <- data.frame("laser" = c("UV-355","V-405","B-488","YG-532","R-640"), "excitation" = c(355,405,488,532,640))
-fortessa_detectors <- data.frame(
-  "laser" = c(c("UV-355","UV-355"),c("V-405","V-405","V-405","V-405","V-405","V-405"),c("B-488","B-488"),c("YG-532","YG-532","YG-532","YG-532","YG-532"),c("R-640","R-640","R-640")),
-  "mid" = c(c(379,740),c(450,525,610,670,710,780),c(515,695),c(575,610,670,695,780),c(670,730,780)),
-  "band" = c(c(28,35),c(50,50,20,30,50,60),c(20,40),c(26,20,30,40,60),c(30,45,60)))
-fortessa_detectors$min <- fortessa_detectors$mid - fortessa_detectors$band
-fortessa_detectors$max <- fortessa_detectors$mid + fortessa_detectors$band
-
-```
-
-```{r}
+``` r
 attune_fp_table <- function(input_string){
   fp_file_location <- paste("Spectra/",input_string,".csv", sep = "")
   excitation_name <- paste(input_string,".ex", sep = "")
@@ -311,7 +262,7 @@ fortessa_fp_table <- function(input_string){
 }
 ```
 
-```{r Actually generating each plot, warning = FALSE}
+``` r
 attune_mScarlet_plot <- attune_fp_table("mScarlet.I");ggsave(file = "Plots/Attune/mScarlet_plot.pdf", attune_mScarlet_plot, height = 4, width = 3)
 attune_EGFP_plot <- attune_fp_table("EGFP");ggsave(file = "Plots/Attune/EGFP_plot.pdf", attune_EGFP_plot, height = 4, width = 3)
 attune_mCherry_plot <- attune_fp_table("mCherry");ggsave(file = "Plots/Attune/mCherry_plot.pdf", attune_mCherry_plot, height = 4, width = 3)
@@ -368,38 +319,61 @@ fortessa_TDsmURFP_plot <- fortessa_fp_table("TDsmURFP");ggsave(file = "Plots/For
 fortessa_iRFP682_plot <- fortessa_fp_table("iRFP682");ggsave(file = "Plots/Fortessa/iRFP682_plot.pdf", fortessa_iRFP682_plot, height = 4, width = 3)
 ```
 
-
-```{r Combined plots, fig.height = 10, fig.width = 20}
+``` r
 library(patchwork)
 
 attune_combined_plot <- attune_mTagBFP2_plot/attune_EGFP_plot|attune_mNeonGreen_plot/attune_UnaG_plot|attune_mScarlet_plot/attune_mCherry_plot|attune_iRFP670_plot/attune_miRFP670_plot|attune_TDsmURFP_plot/plot_spacer() 
 attune_patchwork <- attune_combined_plot + plot_annotation(title = 'Attune')
 attune_patchwork
+```
+
+![](CWRU_Flow_Cytometry_files/figure-gfm/Combined%20plots-1.png)<!-- -->
+
+``` r
 ggsave(file = "Plots/Attune_plots.pdf",attune_patchwork, height = 8, width = 16)
 ggsave(file = "/Users/kmatreyek/Dropbox/Website/Plots/Flow_cytometry/Attune_plots.png", attune_patchwork, height = 8, width = 16)
 
 lsr2_combined_plot <- lsr2_mTagBFP2_plot/lsr2_EGFP_plot|lsr2_mNeonGreen_plot/lsr2_UnaG_plot|lsr2_mScarlet_plot/lsr2_mCherry_plot|lsr2_iRFP670_plot/lsr2_miRFP670_plot|lsr2_TDsmURFP_plot/plot_spacer() 
 lsr2_patchwork <- lsr2_combined_plot + plot_annotation(title = 'LSR2')
 lsr2_patchwork
+```
+
+![](CWRU_Flow_Cytometry_files/figure-gfm/Combined%20plots-2.png)<!-- -->
+
+``` r
 ggsave(file = "Plots/Lsr2_plots.pdf",lsr2_patchwork, height = 8, width = 16)
 ggsave(file = "/Users/kmatreyek/Dropbox/Website/Plots/Flow_cytometry/Lsr2_plots.png", lsr2_patchwork, height = 8, width = 16)
 
 aria_combined_plot <- aria_mTagBFP2_plot/aria_EGFP_plot|aria_mNeonGreen_plot/aria_UnaG_plot|aria_mScarlet_plot/aria_mCherry_plot|aria_iRFP670_plot/aria_miRFP670_plot|aria_TDsmURFP_plot/plot_spacer() 
 aria_patchwork <- aria_combined_plot + plot_annotation(title = 'Aria')
 aria_patchwork
+```
+
+![](CWRU_Flow_Cytometry_files/figure-gfm/Combined%20plots-3.png)<!-- -->
+
+``` r
 ggsave(file = "Plots/Aria_plots.pdf",aria_patchwork, height = 8, width = 16)
 ggsave(file = "/Users/kmatreyek/Dropbox/Website/Plots/Flow_cytometry/Aria_plots.png", aria_patchwork, height = 8, width = 16)
 
 sorp_combined_plot <- sorp_mTagBFP2_plot/sorp_EGFP_plot|sorp_mNeonGreen_plot/sorp_UnaG_plot|sorp_mScarlet_plot/sorp_mCherry_plot|sorp_iRFP670_plot/sorp_miRFP670_plot|sorp_TDsmURFP_plot/plot_spacer() 
 sorp_patchwork <- sorp_combined_plot + plot_annotation(title = 'Aria_SORP')
 sorp_patchwork
+```
+
+![](CWRU_Flow_Cytometry_files/figure-gfm/Combined%20plots-4.png)<!-- -->
+
+``` r
 ggsave(file = "Plots/Aria_sorp_plots.pdf",sorp_patchwork, height = 8, width = 16)
 ggsave(file = "/Users/kmatreyek/Dropbox/Website/Plots/Flow_cytometry/Aria_sorp_plots.png", sorp_patchwork, height = 8, width = 16)
 
 fortessa_combined_plot <- fortessa_mTagBFP2_plot/fortessa_EGFP_plot|fortessa_mNeonGreen_plot/fortessa_UnaG_plot|fortessa_mScarlet_plot/fortessa_mCherry_plot|fortessa_iRFP670_plot/fortessa_miRFP670_plot|fortessa_TDsmURFP_plot/plot_spacer() 
 fortessa_patchwork <- fortessa_combined_plot + plot_annotation(title = 'Fortessa')
 fortessa_patchwork
+```
+
+![](CWRU_Flow_Cytometry_files/figure-gfm/Combined%20plots-5.png)<!-- -->
+
+``` r
 ggsave(file = "Plots/Fortessa_plots.pdf",fortessa_patchwork, height = 8, width = 16)
 ggsave(file = "/Users/kmatreyek/Dropbox/Website/Plots/Flow_cytometry/Fortessa_plots.png", fortessa_patchwork, height = 8, width = 16)
 ```
-
